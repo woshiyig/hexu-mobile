@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="和旭控制台">
+<meta name="theme-color" content="#f2f2f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111114" media="(prefers-color-scheme: dark)">
+<title>和旭控制台</title>
+<style>
+:root{--bg:#f2f2f5;--bg2:#e8eaf0;--card:#fff;--bd:rgba(0,0,0,.06);--sh:0 2px 8px rgba(0,0,0,.06);--t:#1d1d1f;--t2:#6e6e73;--t3:#8e8e93;--ti:#5b6472;--track:#e5e5ea;--tagbg:#fff1d6;--tagfg:#a15c00;--blue:#0a84ff;--green:#28a745;--orange:#f07a1a;--grey:#a0a0a5;--up:#e5393b;--down:#1e9e4a;--yellow:#e09a00;
+--h0:#ebedf0;--h1:#9be9a8;--h2:#40c463;--h3:#30a14e;--h4:#216e39}
+@media (prefers-color-scheme:dark){:root{--bg:#111114;--bg2:#17171c;--card:#22222a;--bd:rgba(255,255,255,.06);--sh:none;--t:#eee;--t2:#aaa;--t3:#888;--ti:#99aaaa;--track:#333;--tagbg:#5a3b10;--tagfg:#ffcc66;--blue:#44aaff;--green:#33cc66;--orange:#ff8a30;--grey:#777;--up:#ff4d4f;--down:#33cc66;--yellow:#ffbb33;
+--h0:#2c2c34;--h1:#0e4429;--h2:#006d32;--h3:#26a641;--h4:#39d353}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:14px/1.4 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;color:var(--t);background:linear-gradient(var(--bg),var(--bg2)) fixed;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 24px)}
+header{display:flex;align-items:center;justify-content:space-between;margin:4px 4px 12px}
+header h1{font-size:20px;margin:0}
+header .r{font-size:12px;color:var(--t3);text-align:right}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:700px){.grid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}}
+@media (min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}.wide{grid-column:span 2}}
+.card{background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);border-radius:16px;padding:14px}
+.ct{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ti);margin-bottom:8px}
+.ct .sp{flex:1}
+.tag{font-size:10px;font-weight:500;color:var(--tagfg);background:var(--tagbg);border-radius:99px;padding:1px 7px}
+.big{font-size:38px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.mut{color:var(--t2);font-size:12px}.note{color:var(--t3);font-size:10px}
+.row{display:flex;align-items:center;gap:8px}.row .sp{flex:1}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.days{display:flex;gap:6px;margin-top:8px}.days>div{flex:1;text-align:center;font-size:11px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.todo{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--bd)}
+.todo:last-child{border:0}.todo .box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--t3);flex:none;margin-top:1px}
+.todo.done .box{background:var(--green);border-color:var(--green)}.todo.done .tt{text-decoration:line-through;color:var(--t3)}
+input[type=text],input[type=password]{width:100%;font:inherit;padding:9px 11px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--t);outline:none}
+button{flex:none;white-space:nowrap;font:inherit;border:0;border-radius:10px;padding:9px 14px;background:var(--blue);color:#fff;font-weight:600}
+button.ghost{background:var(--track);color:var(--t)}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.chip{display:flex;align-items:center;gap:6px;height:40px;padding:0 10px;border-radius:11px;background:var(--track);font-size:13px;font-weight:500;user-select:none;-webkit-user-select:none;cursor:pointer;transition:transform .12s}
+.chip:active{transform:scale(.96)}
+.chip.on{background:linear-gradient(135deg,var(--h2),var(--h3));color:#fff}
+.chip .st{margin-left:auto;font-size:11px;opacity:.85}
+.chip.add{background:none;border:1px dashed var(--t3);color:var(--t2);justify-content:center}
+.heat{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+@media (min-width:700px){.heat{grid-template-columns:repeat(15,1fr)}}
+.heat div{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3)}
+.heat div.today{outline:1.5px solid var(--blue);outline-offset:-1.5px}
+.legend{display:flex;align-items:center;gap:4px;margin-top:8px}.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+select{font:inherit;font-size:12px;background:var(--track);color:var(--t);border:0;border-radius:8px;padding:4px 8px}
+a{color:var(--blue);text-decoration:none}
+#setup{display:none}.err{color:var(--orange);font-size:12px}
+.k{display:flex;justify-content:space-between;padding:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>和旭控制台</h1><div class="r" id="sync">加载中…</div></header>
+
+<div class="card" id="setup" style="margin-bottom:12px">
+  <div class="ct">🔑 连接同步仓库（只需一次）</div>
+  <p class="mut" style="margin:0 0 8px">输入能访问 GitHub 仓库 <b>woshiyig/hexu-console-feed</b> 的令牌。令牌只保存在这台手机的浏览器里，不会上传到别处。</p>
+  <input type="password" id="tok" placeholder="github_pat_…" autocomplete="off">
+  <div class="row" style="margin-top:8px"><button onclick="saveTok()">保存并同步</button><span class="err" id="tokerr"></span></div>
+</div>
+
+<div class="grid">
+  <div class="card"><div class="ct">🕒 时间日期</div>
+    <div class="big" id="clock">--:--</div><div id="date"></div><div class="mut" id="lunar"></div></div>
+
+  <div class="card"><div class="ct">⛅️ 天气 · 重庆</div><div id="wx" class="mut">加载中…</div></div>
+
+  <div class="card"><div class="ct">📈 财经小条<span class="sp"></span></div><div id="fin" class="mut">加载中…</div>
+    <div class="note" style="margin-top:6px">仅展示行情，不构成投资建议</div></div>
+
+  <div class="card"><div class="ct">⚡️ 电力现货电价<span class="sp"></span><span class="tag">非实时</span></div><div id="price" class="mut">等待同步</div></div>
+
+  <div class="card wide"><div class="ct">✅ 待办<span class="sp"></span><span class="note" id="todocount"></span></div>
+    <div class="row" style="margin-bottom:6px"><input type="text" id="todoin" placeholder="在手机上加个待办，回车"><button onclick="addTodo()">添加</button></div>
+    <div id="todos"></div></div>
+
+  <div class="card wide"><div class="ct">👥 和旭看板<span class="sp"></span><a id="office" href="#" target="_blank">打开办公室</a></div><div id="kanban" class="mut">等待同步</div></div>
+
+  <div class="card wide"><div class="ct">🏅 习惯打卡<span class="sp"></span><span class="tag" id="habittag"></span></div>
+    <div class="chips" id="habits"></div>
+    <div class="note" style="margin-top:8px">点一下打卡，长按删除 · 🔥 为连续天数 · 和 Mac 上的控制台共用一份</div></div>
+
+  <div class="card wide"><div class="ct">🟩 30 天热力图<span class="sp"></span><select id="hfilter" onchange="renderHeat()"></select></div>
+    <div class="mut" id="hstat" style="margin-bottom:8px"></div>
+    <div class="heat" id="heat"></div>
+    <div class="legend"><span class="note" id="hrange"></span><span style="flex:1"></span><span class="note">少</span>
+      <i style="background:var(--h0)"></i><i style="background:var(--h1)"></i><i style="background:var(--h2)"></i><i style="background:var(--h3)"></i><i style="background:var(--h4)"></i><span class="note">多</span></div></div>
+</div>
+<p class="note" style="text-align:center;margin-top:16px">数据：GitHub 同步仓库 · Open-Meteo 天气 · 东方财富行情 · <a href="#" onclick="resetTok();return false">更换令牌</a></p>
+</div>
+
+<script>
+const REPO='woshiyig/hexu-console-feed', API='https://api.github.com/repos/'+REPO+'/contents/';
+let TOKEN=localStorage.getItem('hexu_tok')||'';
+let feed=null, habitsDoc=null, habitsSha=null, mobileTodos=[], mobileSha=null, macTodos=[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const uuid=()=>(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)})).toUpperCase();
+const b64e=s=>btoa(unescape(encodeURIComponent(s)));
+
+// ---------- 时间 ----------
+function lunar(d){try{return new Intl.DateTimeFormat('zh-CN-u-ca-chinese',{month:'long',day:'numeric'}).format(d)}catch(e){return''}}
+function tick(){const d=new Date();$('clock').textContent=pad(d.getHours())+':'+pad(d.getMinutes());
+ $('date').textContent=d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+ $('lunar').textContent='北京时间 · 农历 '+lunar(d)}
+tick();setInterval(tick,1000);
+
+// ---------- GitHub ----------
+async function gh(path,raw){const r=await fetch(API+path+'?t='+Date.now(),{headers:{Authorization:'Bearer '+TOKEN,Accept:raw?'application/vnd.github.raw+json':'application/vnd.github+json'},cache:'no-store'});
+ if(r.status===404)return null; if(!r.ok)throw new Error(r.status); return raw?r.text():r.json()}
+async function ghGet(path){const j=await gh(path,false);if(!j)return{data:null,sha:null};
+ const txt=decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));return{data:JSON.parse(txt),sha:j.sha}}
+async function ghPut(path,obj,sha,msg){const body={message:msg,content:b64e(JSON.stringify(obj,null,2))};if(sha)body.sha=sha;
+ const r=await fetch(API+path,{method:'PUT',headers:{Authorization:'Bearer '+TOKEN,Accept:'application/vnd.github+json'},body:JSON.stringify(body)});
+ if(!r.ok)throw new Error(r.status);return (await r.json()).content.sha}
+
+function saveTok(){const v=$('tok').value.trim();if(!v){$('tokerr').textContent='请先粘贴令牌';return}
+ TOKEN=v;localStorage.setItem('hexu_tok',v);$('tok').value='';syncAll(true)}
+function resetTok(){localStorage.removeItem('hexu_tok');TOKEN='';$('setup').style.display='block';window.scrollTo(0,0)}
+
+async function syncAll(fromSetup){
+ if(!TOKEN){$('setup').style.display='block';$('sync').textContent='未连接同步';renderHabits();return}
+ try{
+  const f=await gh('feed.json',true); feed=f?JSON.parse(f):null;
+  const h=await ghGet('habits.json'); habitsDoc=h.data||habitsDoc||{habits:[],checkins:{}}; habitsSha=h.sha;
+  const m=await ghGet('outbox-mobile.json'); mobileTodos=(m.data&&m.data.todos)||[]; mobileSha=m.sha;
+  macTodos=[];
+  for(const [p,label] of [['outbox.json','家里'],['outbox-office.json','办公室']]){
+   try{const o=await gh(p,true); if(o){(JSON.parse(o).todos||[]).forEach(t=>macTodos.push({...t,src:label}))}}catch(e){}
+  }
+  $('setup').style.display='none';$('tokerr').textContent='';
+  $('sync').textContent='已同步 '+new Date().toTimeString().slice(0,5)+(feed&&feed.updated?' · 数据 '+feed.updated:'');
+  renderFeed();renderTodos();renderHabits();
+ }catch(e){
+  $('sync').textContent='同步失败（'+e.message+'）';
+  if(String(e.message)==='401'||String(e.message)==='403'){$('setup').style.display='block';$('tokerr').textContent='令牌无效或没有权限，请重新输入'}
+  renderHabits();
+ }
+}
+
+// ---------- 看板 / 电价 ----------
+function renderFeed(){
+ if(!feed)return;
+ const pr=(name,m)=>m&&m.avg!=null?`<div style="margin-bottom:8px"><div class="row"><span class="mut" style="width:30px">${name}</span><span class="num" style="font-size:22px">${Number(m.avg).toFixed(1)}</span><span class="note">${esc(m.unit||'元/MWh')}</span><span class="sp"></span>${m.url?`<a href="${esc(m.url)}" target="_blank" style="font-size:12px">来源</a>`:''}</div><div class="note" style="padding-left:38px">${esc(m.date)} · ${esc(m.kind||'日均价')} · ${esc(m.source)}</div></div>`:`<div class="row"><span class="mut" style="width:30px">${name}</span><span class="mut">等待同步</span></div>`;
+ $('price').innerHTML=pr('蒙西',feed.mengxi)+pr('重庆',feed.chongqing);
+ const col=s=>s==='已完成'?'var(--green)':s==='进行中'?'var(--orange)':'var(--grey)';
+ $('kanban').innerHTML=(feed.kanban||[]).map(p=>`<div class="k"><span><span class="dot" style="background:${col(p.status)}"></span>&nbsp; <b style="color:var(--t);font-weight:500">${esc(p.name)}</b></span><span class="note" style="font-size:11px">${esc(p.status||'待命')}</span></div><div class="note" style="margin:-2px 0 4px 16px">${esc(p.task||'')}</div>`).join('')||'暂无';
+ if(feed.officeURL)$('office').href=feed.officeURL;
+}
+
+// ---------- 待办 ----------
+function renderTodos(){
+ const rows=[];
+ (feed&&feed.todos||[]).forEach(t=>rows.push(`<div class="todo ${t.done?'done':''}"><span class="box"></span><div><span class="tt">${esc(t.title)}</span> <span class="tag">行政</span>${t.due?`<div class="note" style="color:var(--yellow)">⏰ ${esc(t.due)}</div>`:''}</div></div>`));
+ mobileTodos.forEach((t,i)=>rows.push(`<div class="todo ${t.done?'done':''}" onclick="toggleTodo(${i})"><span class="box"></span><div><span class="tt">${esc(t.title)}</span> <span class="tag">手机</span></div></div>`));
+ macTodos.forEach(t=>rows.push(`<div class="todo ${t.done?'done':''}"><span class="box"></span><div><span class="tt">${esc(t.title)}</span> <span class="tag">${t.src}</span>${t.due?`<div class="note" style="color:var(--yellow)">⏰ ${esc(t.due.replace('T',' ').slice(0,16))}</div>`:''}</div></div>`));
+ $('todos').innerHTML=rows.join('')||'<span class="mut">还没有待办</span>';
+ const open=rows.length-(rows.join('').match(/todo done/g)||[]).length;
+ $('todocount').textContent=rows.length?open+' 项未完成':'';
+}
+async function saveMobile(){try{mobileSha=await ghPut('outbox-mobile.json',{updated:new Date().toISOString(),todos:mobileTodos},mobileSha,'mobile todos')}catch(e){$('sync').textContent='待办保存失败，稍后重试';const m=await ghGet('outbox-mobile.json');mobileSha=m.sha}}
+async function addTodo(){const v=$('todoin').value.trim();if(!v||!TOKEN)return;$('todoin').value='';mobileTodos.unshift({title:v,due:null,done:false});renderTodos();saveMobile()}
+function toggleTodo(i){mobileTodos[i].done=!mobileTodos[i].done;renderTodos();saveMobile()}
+$('todoin').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo()});
+
+// ---------- 习惯 ----------
+const H=()=>habitsDoc||{habits:[],checkins:{}};
+const isDone=(id,k)=>(H().checkins[k||dkey(new Date())]||[]).includes(id);
+function streak(id){let d=new Date();if(!isDone(id))d.setDate(d.getDate()-1);let n=0;while(isDone(id,dkey(d))){n++;d.setDate(d.getDate()-1)}return n}
+let saveTimer=null;
+function saveHabits(){clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{
+ H().updated=new Date().toISOString();
+ try{habitsSha=await ghPut('habits.json',H(),habitsSha,'habits from mobile')}
+ catch(e){ // 有冲突：拉最新再合并今天的状态
+  const latest=await ghGet('habits.json');habitsSha=latest.sha;$('sync').textContent='打卡保存冲突，已刷新';habitsDoc=latest.data||habitsDoc;renderHabits()}
+},600)}
+function toggleHabit(id){const k=dkey(new Date()),c=H().checkins;let s=c[k]||[];s=s.includes(id)?s.filter(x=>x!==id):s.concat(id);if(s.length)c[k]=s;else delete c[k];renderHabits();saveHabits()}
+function addHabit(){const n=prompt('新习惯名称');if(!n||!n.trim())return;if(H().habits.some(h=>h.name===n.trim()))return;
+ habitsDoc=H();habitsDoc.habits.push({id:uuid(),name:n.trim(),createdAt:new Date().toISOString().slice(0,19)+'Z'});renderHabits();saveHabits()}
+function delHabit(id){const h=H().habits.find(x=>x.id===id);if(!h||!confirm('删除习惯「'+h.name+'」及其打卡记录？'))return;
+ H().habits=H().habits.filter(x=>x.id!==id);for(const k in H().checkins){const s=H().checkins[k].filter(x=>x!==id);if(s.length)H().checkins[k]=s;else delete H().checkins[k]}renderHabits();saveHabits()}
+function renderHabits(){
+ const hs=H().habits;
+ $('habits').innerHTML=hs.map(h=>{const on=isDone(h.id),s=streak(h.id);return `<div class="chip ${on?'on':''}" data-id="${h.id}">${on?'✓':'○'} ${esc(h.name)}${s?`<span class="st">🔥${s}</span>`:''}</div>`}).join('')+(TOKEN?'<div class="chip add" onclick="addHabit()">＋ 习惯</div>':'');
+ const done=hs.filter(h=>isDone(h.id)).length;$('habittag').textContent=hs.length?`今天 ${done}/${hs.length}`:'';
+ document.querySelectorAll('#habits .chip[data-id]').forEach(el=>{let t=null,long=false;const id=el.dataset.id;
+  el.addEventListener('touchstart',()=>{long=false;t=setTimeout(()=>{long=true;delHabit(id)},650)},{passive:true});
+  el.addEventListener('touchend',()=>clearTimeout(t));el.addEventListener('touchmove',()=>clearTimeout(t),{passive:true});
+  el.addEventListener('click',()=>{if(!long)toggleHabit(id)});
+  el.addEventListener('contextmenu',e=>{e.preventDefault();delHabit(id)})});
+ const sel=$('hfilter'),cur=sel.value;sel.innerHTML='<option value="">全部习惯</option>'+hs.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join('');sel.value=hs.some(h=>h.id===cur)?cur:'';
+ renderHeat();
+}
+function renderHeat(){
+ const f=$('hfilter').value,hs=H().habits,ids=hs.map(h=>h.id),now=new Date(),cells=[];let act=0,sum=0,first=null;
+ for(let b=29;b>=0;b--){const d=new Date(now);d.setDate(d.getDate()-b);if(!first)first=d;const k=dkey(d),s=H().checkins[k]||[];
+  let done,total;if(f){done=s.includes(f)?1:0;total=1}else{done=s.filter(x=>ids.includes(x)).length;total=hs.length}
+  const fr=total?done/total:0;sum+=fr;if(done)act++;
+  const lv=!done?0:(total<=1||fr>=1)?4:fr>=.66?3:fr>=.33?2:1;
+  cells.push(`<div class="${b===0?'today':''}" style="background:var(--h${lv});${lv>=3?'color:rgba(255,255,255,.85)':''}" title="${d.getMonth()+1}月${d.getDate()}日：${done}/${total}">${d.getDate()}</div>`)}
+ $('heat').innerHTML=cells.join('');$('hstat').textContent=`打卡 ${act} 天 · 完成率 ${Math.round(sum/30*100)}%`;
+ $('hrange').textContent=`${first.getMonth()+1}月${first.getDate()}日 – 今天`;
+}
+
+// ---------- 天气 ----------
+const WX={0:'晴',1:'晴间多云',2:'多云',3:'阴',45:'雾',48:'雾',51:'毛毛雨',53:'毛毛雨',55:'毛毛雨',61:'小雨',63:'中雨',65:'大雨',66:'冻雨',67:'冻雨',71:'小雪',73:'中雪',75:'大雪',80:'阵雨',81:'阵雨',82:'强阵雨',95:'雷阵雨',96:'雷阵雨',99:'雷阵雨'};
+const WI=c=>c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<50?'🌫️':c<70||(c>=80&&c<90)?'🌧️':c<80?'🌨️':'⛈️';
+async function loadWx(){try{const r=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude=29.56&longitude=106.55&current=temperature_2m,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FShanghai&forecast_days=4')).json();
+ const c=r.current,d=r.daily,wk=['周日','周一','周二','周三','周四','周五','周六'];
+ let days='';for(let i=1;i<d.time.length;i++){const dt=new Date(d.time[i]+'T00:00:00');days+=`<div><div class="note">${i===1?'明天':wk[dt.getDay()]}</div><div>${WI(d.weather_code[i])}</div><div>${WX[d.weather_code[i]]||''}</div><div class="num" style="font-weight:400">${Math.round(d.temperature_2m_min[i])}~${Math.round(d.temperature_2m_max[i])}°</div></div>`}
+ $('wx').innerHTML=`<div class="row" style="color:var(--t)"><span class="big">${Math.round(c.temperature_2m)}°</span><div><div>${WI(c.weather_code)} ${WX[c.weather_code]||''}</div><div class="mut">湿度 ${Math.round(c.relative_humidity_2m)}%</div></div></div><div class="days">${days}</div>`}
+ catch(e){$('wx').textContent='暂无数据'}}
+
+// ---------- 财经（东方财富 JSONP） ----------
+const EMH=['push2.eastmoney.com','push2delay.eastmoney.com','82.push2.eastmoney.com'];
+function renderFin(r){
+  const m={};r.data.diff.forEach(x=>m[x.f12]=x);const k=m['000688'],sh=m['000001'],sz=m['399106'];
+  const q=(n,x)=>{const c=x.f3>0?'var(--up)':x.f3<0?'var(--down)':'var(--t)';return `<div class="row" style="color:var(--t);padding:3px 0"><span>${n}</span><span class="sp"></span><span class="num" style="color:${c}">${Number(x.f2).toFixed(2)}</span><span class="num" style="color:${c};font-weight:400;width:64px;text-align:right">${x.f3>0?'+':''}${Number(x.f3).toFixed(2)}%</span></div>`};
+  const tv=(Number(sh.f6)+Number(sz.f6))/1e8,ts=sh.f124?new Date(sh.f124*1000):new Date();
+  $('fin').innerHTML=q('科创50',k)+q('上证指数',sh)+`<div class="row" style="color:var(--t);padding:3px 0"><span>两市成交额</span><span class="sp"></span><span class="num">${tv>=10000?(tv/10000).toFixed(2)+' 万亿':tv.toFixed(0)+' 亿'}</span></div><div class="note">数据时间 ${ts.getMonth()+1}月${ts.getDate()}日 ${pad(ts.getHours())}:${pad(ts.getMinutes())} · 东方财富</div>`}
+function loadFin(i=0){
+ if(i>=EMH.length){if(!$('fin').querySelector('.row'))$('fin').textContent='暂无数据';return}
+ const cb='emcb'+Date.now()+i;let done=false;const s=document.createElement('script');
+ const next=()=>{if(done)return;done=true;s.remove();delete window[cb];loadFin(i+1)};
+ window[cb]=r=>{if(done)return;done=true;s.remove();delete window[cb];try{renderFin(r)}catch(e){loadFin(i+1)}};
+ s.onerror=next;setTimeout(next,5000);
+ s.src=`https://${EMH[i]}/api/qt/ulist.np/get?fltt=2&secids=1.000688,1.000001,0.399106&fields=f2,f3,f4,f6,f12,f14,f124&cb=${cb}`;document.head.appendChild(s)}
+
+loadWx();loadFin();syncAll();
+setInterval(()=>loadFin(),30000);setInterval(loadWx,30*60000);setInterval(syncAll,5*60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){syncAll();loadFin()}});
+</script>
+</body>
+</html>
